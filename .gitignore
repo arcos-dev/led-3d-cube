@@ -1,0 +1,30 @@
+node_modules/# Logs
+
+*.locallogs
+
+.DS_Store*.log
+
+dist/npm-debug.log*
+
+*.logyarn-debug.log*
+
+.vscode/*yarn-error.log*
+
+!.vscode/extensions.jsonpnpm-debug.log*
+
+lerna-debug.log*
+
+node_modules
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
