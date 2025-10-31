@@ -217,15 +217,20 @@
     const ledGeometry = new THREE.SphereGeometry(LED_RADIUS, 20, 20); // Mais segments para suavidade
 
     for (let i = 0; i < CUBE_SIZE * CUBE_SIZE * CUBE_SIZE; i++) {
-      // Material ultra-realista: LED translúcido com especularidade
-      const ledMaterial = new THREE.MeshStandardMaterial({
-        color: 0x0a0a0a,
+      // Material ultra-realista: LED com invólucro transparente quando desligado
+      const ledMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0xdddddd,     // Cor cinza claro (invólucro transparente)
         emissive: 0x000000,
         emissiveIntensity: 0,
-        metalness: 0.8,      // Mais metálico para reflexos realistas
-        roughness: 0.15,     // Muito polido para brilho intenso
+        metalness: 0.1,      // Baixo metalness para plástico/vidro
+        roughness: 0.2,      // Levemente polido
         transparent: true,
-        opacity: 0.95,       // Mais opaco para cores vibrantes
+        opacity: 0.15,       // Muito transparente quando desligado
+        transmission: 0.9,   // Alta transmissão de luz (vidro)
+        thickness: 0.5,      // Espessura do material
+        ior: 1.5,            // Índice de refração (vidro/plástico)
+        clearcoat: 0.3,      // Camada brilhante externa
+        clearcoatRoughness: 0.1,
         toneMapped: true,
         side: THREE.DoubleSide,
         wireframe: false
@@ -411,18 +416,29 @@
           realisticEffect.color.b
         );
 
-        // Update material properties com intensidade realista
-        material.color.copy(tempColor);
-        material.emissive.copy(tempColor);
-
         // Dynamic emissive intensity - muito mais intenso para realismo
         const intensity = realisticEffect.intensity;
-        material.emissiveIntensity = intensity * 5.0; // Aumentado de 3.0 para 5.0
-        material.opacity = 0.85 + (intensity * 0.15);
 
-        // Metalness e roughness dinâmicos para reflexos realistas
-        material.metalness = 0.7 + (intensity * 0.3);
-        material.roughness = 0.2 - (intensity * 0.15);
+        // Update material properties baseado no estado (ligado/desligado)
+        if (intensity > 0.01) {
+          // LED LIGADO: cor vibrante, opaco, metálico
+          material.color.copy(tempColor);
+          material.emissive.copy(tempColor);
+          material.emissiveIntensity = intensity * 5.0;
+          material.opacity = 0.85 + (intensity * 0.15);
+          material.metalness = 0.7 + (intensity * 0.3);
+          material.roughness = 0.2 - (intensity * 0.15);
+          material.transmission = 0; // Sem transmissão quando ligado
+        } else {
+          // LED DESLIGADO: transparente, invólucro incolor
+          material.color.setHex(0xdddddd); // Cinza claro
+          material.emissive.setHex(0x000000);
+          material.emissiveIntensity = 0;
+          material.opacity = 0.15; // Muito transparente
+          material.metalness = 0.1; // Plástico
+          material.roughness = 0.2;
+          material.transmission = 0.9; // Alta transmissão (vidro)
+        }
 
         // Update primary glow layer (halo próximo intenso)
         if (intensity > 0.01) {
