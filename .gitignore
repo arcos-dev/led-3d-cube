@@ -1,20 +1,14 @@
-node_modules/# Logs
-
-*.locallogs
-
-.DS_Store*.log
-
-dist/npm-debug.log*
-
-*.logyarn-debug.log*
-
-.vscode/*yarn-error.log*
-
-!.vscode/extensions.jsonpnpm-debug.log*
-
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+dist
 dist-ssr
 *.local
 

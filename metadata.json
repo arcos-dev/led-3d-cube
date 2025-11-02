@@ -1,0 +1,5 @@
+{
+  "name": "Visualizador de Cubo de LED 3D para Wokwi",
+  "description": "Um visualizador 3D realista e interativo para um cubo de LED 8x8x8, projetado para se integrar perfeitamente com simulações de Arduino no Wokwi. Renderiza animações complexas, como os padrões de Fibonacci, em tempo real.",
+  "requestFramePermissions": []
+}
