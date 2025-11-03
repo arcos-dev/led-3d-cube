@@ -1,4 +1,3 @@
-// FIX: Remove .js extension for consistency.
 import { CUBE_SIZE } from '../constants';
 
 /**
@@ -9,7 +8,6 @@ import { CUBE_SIZE } from '../constants';
  * @param z - Coordenada Z (0-7)
  * @returns O índice linear do LED (0-511)
  */
-// FIX: Add types to function parameters and return value.
 export const xyzToIndex = (x: number, y: number, z: number): number => {
   if (x >= CUBE_SIZE || y >= CUBE_SIZE || z >= CUBE_SIZE || x < 0 || y < 0 || z < 0) {
     return 0; // Proteção contra overflow
@@ -34,4 +32,43 @@ export const xyzToIndex = (x: number, y: number, z: number): number => {
   }
   
   return index;
+};
+
+/**
+ * Converte um índice linear para coordenadas XYZ,
+ * fazendo o inverso da lógica de mapeamento em serpentina.
+ * @param index - O índice linear do LED (0-511)
+ * @returns Um objeto com as coordenadas { x, y, z }
+ */
+export const indexToXyz = (index: number): { x: number; y: number; z: number } => {
+  if (index < 0 || index >= CUBE_SIZE * CUBE_SIZE * CUBE_SIZE) {
+    return { x: 0, y: 0, z: 0 }; // Proteção
+  }
+
+  const z = Math.floor(index / (CUBE_SIZE * CUBE_SIZE));
+  const layerIndex = index % (CUBE_SIZE * CUBE_SIZE);
+
+  let y: number, x: number;
+
+  if (z % 2 === 0) { // Camadas Z pares
+    y = Math.floor(layerIndex / CUBE_SIZE);
+    const xInRow = layerIndex % CUBE_SIZE;
+    if (y % 2 === 0) { // Linhas Y pares
+      x = xInRow;
+    } else { // Linhas Y ímpares
+      x = CUBE_SIZE - 1 - xInRow;
+    }
+  } else { // Camadas Z ímpares
+    const yRev = Math.floor(layerIndex / CUBE_SIZE);
+    y = CUBE_SIZE - 1 - yRev;
+    const xInRow = layerIndex % CUBE_SIZE;
+    // A lógica do X depende da linha original na camada (yRev)
+    if (yRev % 2 === 0) {
+      x = CUBE_SIZE - 1 - xInRow;
+    } else {
+      x = xInRow;
+    }
+  }
+
+  return { x, y, z };
 };
